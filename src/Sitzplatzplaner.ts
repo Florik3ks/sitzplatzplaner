@@ -22,11 +22,16 @@ export default defineComponent({
     const maxGridWidth = 15;
     const maxGridHeight = 15;
     return {
+      // navigation tabs
+      selectedTab: 0,
+      // grid size data
       maxGridWidth: maxGridWidth,
       maxGridHeight: maxGridHeight,
       gridWidth: 5,
       gridHeight: 5,
-      sideWidth: 25,
+      planSettingsOpen: false,
+      appendFromFile: false,
+
       algorithmRandomness: 2,
       studentFieldVisible: true,
       ruleVisible: false,
@@ -35,14 +40,17 @@ export default defineComponent({
       nearbyRulesVisible: true,
       firstRowRulesVisible: true,
       notBackRulesVisible: true,
-      studentFieldValue: "",
+
+      newStudent: "",
+      students: ["a", "b"] as string[],
+      studentFieldValue: "", // old
+
       nearbyRules: [] as Rule[],
       avoidRules: [] as Rule[],
       firstRowRules: [] as string[],
       notBackRules: [] as string[],
       isMouseDown: false,
       presetCount: 4,
-      presetPageOpen: false,
       fieldBtnContextMenuOpen: false,
       contextMenuTop: "0px",
       contextMenuLeft: "0px",
@@ -53,20 +61,25 @@ export default defineComponent({
       className: "",
       rotateText: false,
       downloadPlanFromTeacherPerspective: true,
+      takingPicture: false,
       algorithmRunning: false,
-      // sitzplaetze2: this.instantiateList(maxGridWidth, maxGridHeight) as Sitzplatz[],
-      sitzplaetze: this.instantiateDict(maxGridWidth, maxGridHeight),
+      // seats2: this.instantiateList(maxGridWidth, maxGridHeight) as Sitzplatz[],
+      seats: this.instantiateDict(maxGridWidth, maxGridHeight),
     };
   },
-  mounted() {
+  mounted()
+  {
+    this.setPreset(0);
+    
     AlgorithmWorker.worker.onmessage = event =>
     {
+      alert("hooo");
       if (event.data.done)
       {
         if (event.data.seats)
         {
           event.data.seats.forEach((seat: Sitzplatz) => {
-            this.sitzplaetze[seat.x + "," + seat.y] = seat;
+            this.seats[seat.x + "," + seat.y] = seat;
           });
         }
         this.loadingDivOpen = false;
@@ -132,9 +145,9 @@ export default defineComponent({
       });
 
       // check fields
-      for (const key in this.sitzplaetze)
+      for (const key in this.seats)
       {
-        const field = this.sitzplaetze[key];
+        const field = this.seats[key];
         if (!names.includes(field.name))
         {
           field.name = "";
@@ -149,6 +162,117 @@ export default defineComponent({
     //   this.algorithmRunning = false;
     //   this.loadingDivOpen = false;
     // },
+    startDrag(evt: any, item: any)
+    {
+      evt.dataTransfer.dropEffect = 'move';
+      evt.dataTransfer.effectAllowed = 'move';
+      evt.dataTransfer.setData('studentName', item);
+    },
+    startDragFromSeat(evt : any, x : number, y: number) {
+      evt.dataTransfer.dropEffect = 'move';
+      evt.dataTransfer.effectAllowed = 'move';
+      evt.dataTransfer.setData('studentName', this.seats[x.toString() + "," + y.toString()].name);
+      evt.dataTransfer.setData('seat', x.toString() + "," + y.toString());
+    },
+    onDrop(evt : any, x : number, y : number) {
+      const student = evt.dataTransfer.getData('studentName');
+      const oldSeat = this.seats[evt.dataTransfer.getData('seat')];
+      // if dragged from old seat, remove student on old seat
+      if (oldSeat !== undefined)
+      {
+        oldSeat.manuallySelected = false;
+        oldSeat.name = "";
+      }
+      else // if dragged from list, remove from possible old seat
+      {
+        for (const key in this.seats)
+        {
+          const field = this.seats[key];
+          if (field.name == student)
+          {
+            field.name = "";
+            field.manuallySelected = false;
+          }
+        }
+      }
+      
+      const seat = this.seats[x.toString() + "," + y.toString()];
+      seat.marked = true;
+      seat.manuallySelected = true;
+      seat.name = student;
+    },
+    onDropDelete(evt: any)
+    {
+      const student = evt.dataTransfer.getData('studentName');
+      const oldSeat = this.seats[evt.dataTransfer.getData('seat')];
+      // if dragged from old seat, remove student on old seat
+      if (oldSeat !== undefined)
+      {
+        oldSeat.manuallySelected = false;
+        oldSeat.name = "";
+      }
+      else // if dragged from list, remove from possible old seat
+      {
+        for (let index = this.students.length - 1; index >= 0 ; index--) {
+          const element = this.students[index];
+          if (element == student)
+          {
+            this.students.splice(index, 1);
+            this.removeStudentFromSeat();
+            return;
+          }
+        }
+      }
+    },
+    onStudentListDrop(evt: any)
+    {
+      const oldSeat = this.seats[evt.dataTransfer.getData('seat')];
+      // if dragged from old seat, remove student on old seat
+      if (oldSeat !== undefined)
+      {
+        oldSeat.manuallySelected = false;
+        oldSeat.name = "";
+      }
+    },
+    addNewStudent()
+    {
+      if (this.newStudent.trim() == "")
+      {
+        return;
+      }
+      this.students.push(this.newStudent);
+      this.checkName(this.students.length - 1);
+      this.newStudent = "";
+    },
+    studentChange(i : number)
+    {
+      for (let index = this.students.length - 1; index >= 0 ; index--) {
+        const element = this.students[index];
+        if (element == "" || element.trim() == "")
+        {
+          this.students.splice(index, 1);
+          this.removeStudentFromSeat();
+          return;
+        }
+      }
+      this.checkName(i);
+      for (const key in this.seats)
+      {
+        const field = this.seats[key];
+        if (!this.students.includes(field.name) && field.name != "")
+        {
+          field.name = this.students[i];
+        }
+      }
+    },
+    removeStudent(i: number)
+    {
+      if (i >= 0 && i < this.students.length)
+      {
+        this.students.splice(i, 1);
+        this.removeStudentFromSeat();
+      }
+    },
     downloadPlan()
     {
       const tafel = document.getElementById('tafel');
@@ -161,6 +285,7 @@ export default defineComponent({
         if (this.downloadPlanFromTeacherPerspective)
         {
           this.rotateText = true;
+          this.takingPicture = true;
         }
         const node = document.getElementById('sitzplan');
 
@@ -210,8 +335,9 @@ export default defineComponent({
               }
             }).then(() =>
             {
-              tafel.innerText = "TAFEL";
+              tafel.innerText = "Lehrer";
               this.rotateText = false;
+              this.takingPicture = false;
             });
         }
       }
@@ -220,7 +346,7 @@ export default defineComponent({
     {
       if (this.fieldBtnContextMenuOpen) return;
 
-      const platz: Sitzplatz = this.sitzplaetze[x.toString() + "," + y.toString()];
+      const platz: Sitzplatz = this.seats[x.toString() + "," + y.toString()];
       platz.marked = !platz.marked;
 
       if (!platz.marked && platz.name != "")
@@ -284,24 +410,23 @@ export default defineComponent({
     {
       if (e.trim() != "")
       {
-        for (const key in this.sitzplaetze)
+        for (const key in this.seats)
         {
-          const field = this.sitzplaetze[key];
+          const field = this.seats[key];
           if (field.name == e)
           {
             field.name = "";
             field.manuallySelected = false;
           }
         }
-        this.sitzplaetze[this.contextMenuOpenedBy].manuallySelected = true;
-      } else { this.sitzplaetze[this.contextMenuOpenedBy].manuallySelected = false; }
-      this.sitzplaetze[this.contextMenuOpenedBy].name = e;
-      this.sitzplaetze[this.contextMenuOpenedBy].marked = true;
+        this.seats[this.contextMenuOpenedBy].manuallySelected = true;
+      } else { this.seats[this.contextMenuOpenedBy].manuallySelected = false; }
+      this.seats[this.contextMenuOpenedBy].name = e;
+      this.seats[this.contextMenuOpenedBy].marked = true;
     },
     setPreset(i: number)
     {
-      this.presetPageOpen = false;
-      this.sitzplaetze = this.instantiateDict(this.maxGridWidth, this.maxGridHeight);
+      this.seats = this.instantiateDict(this.maxGridWidth, this.maxGridHeight);
       switch (i)
       {
         case 0:
@@ -414,7 +539,7 @@ export default defineComponent({
       this.resetNamesOnPlan(true);
       if (!this.checkForImpossibleRules())
       {
-        alert("Es überlappen sich Regeln, sodass Schüler sowohl nebeneinander als auch nicht nebeneinander sitzen sollen.")
+        alert("Es überlappen Regeln, sodass Schüler sowohl nebeneinander als auch nicht nebeneinander sitzen sollen.")
         return;
       }
       this.algorithmRunning = true;
@@ -538,7 +663,25 @@ export default defineComponent({
 
       return studentList;
     },
-    loadStudentFile(ev: any) {
+    confirmLoad(ev: any)
+    {
+      if (this.appendFromFile)
+      {
+        return;
+      }
+
+      if (this.students.length > 0)
+      {
+        //TODO: maybe wegmachen?
+        if (confirm("Möchten Sie wirklich alle Schüler überschreiben?"))
+        {
+          return;
+        }
+        ev.preventDefault();
+      }
+    },
+    loadStudentFile(ev: any)
+    {
       const file: File = ev.target.files[0];
       let result;
       const reader = new FileReader();
@@ -555,7 +698,12 @@ export default defineComponent({
         alert("Diese Datei ist keine CSV-Datei");
       }
     },
-    loadNamesFromFile(data: string) {
+    loadNamesFromFile(data: string)
+    {
+      if (!this.appendFromFile)
+      {
+        this.students = [];
+      }
       const lines = data.split("\n").filter((x) => x !== null && x !== "");
       this.studentFieldValue = "";
       for (let i = 0; i < lines.length; i++) {
@@ -564,9 +712,10 @@ export default defineComponent({
         } else if (i > 1) {
           let name: string;
           name = lines[i].split(RegExp(";|,"))[2].replace(/"/g,"") + " ";
-          name += lines[i].split(RegExp(";|,"))[1].replace(/"/g,"") + "\n";
+          name += lines[i].split(RegExp(";|,"))[1].replace(/"/g,"");
           if (name.trim().length > 0) {
-            this.studentFieldValue += name;
+            this.students.push(name);
+            this.checkName(this.students.length - 1);
           }
         }
       }
@@ -574,7 +723,7 @@ export default defineComponent({
     resetNamesOnPlan(excludeManuallySelected=false) {
       for (let x = 0; x < this.maxGridWidth; x++) {
         for (let y = 0; y < this.maxGridHeight; y++) {
-          const field: Sitzplatz = this.sitzplaetze[x.toString() + "," + y.toString()];
+          const field: Sitzplatz = this.seats[x.toString() + "," + y.toString()];
           if (!(excludeManuallySelected && field.manuallySelected)){
             field.name = "";
             field.manuallySelected = false;
@@ -583,16 +732,16 @@ export default defineComponent({
       }
     },
     isMarked(x: number, y: number) {
-      if (!Object.keys(this.sitzplaetze).includes(x.toString() + "," + y.toString())) {
+      if (!Object.keys(this.seats).includes(x.toString() + "," + y.toString())) {
         return false;
       }
-      return this.sitzplaetze[x.toString() + "," + y.toString()].marked;
+      return this.seats[x.toString() + "," + y.toString()].marked;
     },
     isManuallySelected(x: number, y: number) {
-      if (!Object.keys(this.sitzplaetze).includes(x.toString() + "," + y.toString())) {
+      if (!Object.keys(this.seats).includes(x.toString() + "," + y.toString())) {
         return false;
       }
-      return this.sitzplaetze[x.toString() + "," + y.toString()].manuallySelected;
+      return this.seats[x.toString() + "," + y.toString()].manuallySelected;
     },
     // instantiateList(maxGridWidth: number, maxGridHeight: number) {
     //   const fields: Sitzplatz[] = [];
@@ -603,7 +752,7 @@ export default defineComponent({
     //   }
     //   return fields;
     // },
-    instantiateDict(maxGridWidth: number, maxGridHeight: number) {
+    instantiateDict(maxGridWidth: number, maxGridHeight: number){
       const dict: { [id: string]: Sitzplatz } = {};
 
       for (let x = 0; x < maxGridWidth; x++) {
@@ -611,19 +760,53 @@ export default defineComponent({
           dict[x.toString() + "," + y.toString()] = new Sitzplatz(x, y, false);
         }
       }
+      
       return dict;
     },
     getUsedFieldsToComputePlan() {
       const fields: Sitzplatz[] = [];
       for (let y = 0; y < this.gridHeight; y++) {
         for (let x = 0; x < this.gridWidth; x++) {
-          const field: Sitzplatz = this.sitzplaetze[x.toString() + "," + y.toString()];
+          const field: Sitzplatz = this.seats[x.toString() + "," + y.toString()];
           if (field.marked) {
             fields.push(field);
           }
         }
       }
       return fields;
+    },
+    checkName(i: number)
+    {
+      const element = this.students[i];
+      for (let index = 0; index < this.students.length; index++) {
+        const element2 = this.students[index];
+        if (element == element2 && i != index)
+        {
+          let j = 1;
+          let newName;
+          do {
+            newName = element + "(" + j + ")";
+            j++;
+          } while (this.students.includes(newName));
+          this.students[i] = newName;
+          return;
+        }
+      }
+    },
+    removeStudentFromSeat()
+    {
+      // after change, only one name on the seats does not exist
+      // find this name and delete it from the seat
+      // check fields
+      for (const key in this.seats)
+      {
+        const field = this.seats[key];
+        if (!this.students.includes(field.name) && field.name != "")
+        {
+          field.name = "";
+          field.manuallySelected = false;
+        }
+      }
     },
     checkForDoubleNames()
     {
@@ -654,9 +837,15 @@ export default defineComponent({
     },
     getNames()
     {
-      const names = this.studentFieldValue.split("\n").filter((x) => x !== null && x !== "");
-      for (let i = 0; i < names.length; i++) {
-        names[i] = names[i].trim();        
+      // const names = this.studentFieldValue.split("\n").filter((x) => x !== null && x !== "");
+      // for (let i = 0; i < names.length; i++) {
+      //   names[i] = names[i].trim();        
+      // }
+      // clone names, idk why i have to do that
+      const names = [] as string[];
+      for (let index = 0; index < this.students.length; index++) {
+        const element = this.students[index];
+        names.push(element);
       }
       return names;
     },
@@ -668,7 +857,7 @@ export default defineComponent({
     },
     alert(a: any)
     {
-      this.alert(a);
+      alert(a);
     }
   },
 });

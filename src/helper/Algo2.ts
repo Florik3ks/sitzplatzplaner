@@ -170,7 +170,6 @@ export class Algo2 {
                 freeStudents.splice(i, 1);
             }
         }
-        // this.shuffleArray(firstRow);
         for (let i = freeStudents.length - 1; i >= 0; i--) {
             if (freeStudents[i].sitWith.length > 0) {
                 hasFixedNeighbours.push(freeStudents[i]);
@@ -204,9 +203,6 @@ export class Algo2 {
             const frontRow = this.seats.splice(0, frontRowCount);
             this.shuffleArray(frontRow);
             this.seats = frontRow.concat(this.seats);
-            // const frontRow = studentOrder.splice(0, frontRowCount);
-            // this.shuffleArray(frontRow);
-            // studentOrder = frontRow.concat(studentOrder);
         }
 
         const freeSeats = [] as Sitzplatz[];

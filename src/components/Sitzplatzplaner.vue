@@ -19,7 +19,7 @@
       <img :src="require(`@/assets/GMO_Schullogo.png`)" class="logo" />
       <div class="tabContainer">
           <div :class="selectedTab == 0 ? 'tab selected' : 'tab'" @click="selectedTab = 0">Sitzplan</div>
-          <div :class="selectedTab == 1 ? 'tab selected' : 'tab'" @click="selectedTab = 1">Schülerliste</div>
+          <div :class="selectedTab == 1 ? 'tab selected' : 'tab'" @click="selectedTab = 1">Schüler</div>
           <div :class="selectedTab == 2 ? 'tab selected' : 'tab'" @click="selectedTab = 2">Einstellungen</div>
       </div>
       <img >
@@ -274,7 +274,17 @@
               </div>
             </div>
 
-            <input type="text" @change="addNewStudent" v-model="newStudent" pattern="[a-zA-Z0-9 ]+" required placeholder="Neuer Schüler" class="newStudent">
+            <div class="newStudentContainer">
+              <input type="text" @change="addNewStudent" v-model="newStudent" pattern="[a-zA-Z0-9 ]+" required placeholder="Neuer Schüler" class="newStudent">
+              <div 
+                class="removeStudent big" title="Papierkorb" @click="alert('Ziehen Sie einen Schüler über den Papierkorb, um ihn zu löschen.')"
+                @drop="onDropDelete($event)"
+                @dragover.prevent
+                @dragenter.prevent
+              >
+              <i class='fas'>&#xf2ed;</i>
+              </div>
+            </div>
           </div>
           <div title="Soll der Dateiinhalt angehängt werden oder die bisherige Liste überschreiben?">
             <input id="appendBox" type="checkbox" v-model="appendFromFile"/>
@@ -285,16 +295,119 @@
             <label for="fileInputThingy"><span style="line-height: 31px"> Datei auswählen </span></label>
           </button>
         </div>
+
+
+
+
+          <div class="ruleDiv">
+            <button class="btn subBtn" @click="avoidRulesVisible = !avoidRulesVisible">
+              Dürfen <strong>nicht</strong> nebeneinander&nbsp;&nbsp;
+              <i v-if="!avoidRulesVisible" class="arrowdown" />
+              <i v-if="avoidRulesVisible" class="arrowup" />
+            </button>
+              <div class="ruleTypeDiv" v-if="avoidRulesVisible">
+                <div class="singleRuleDiv" v-for="(_, i) in avoidRules.length" :key="i">
+                  <button class="deleteRule" @click="deleteRuleAt(parseInt(i), avoidRules)"><i class='fas'>&#xf2ed;</i></button>
+                  <select v-model="avoidRules[parseInt(i)].student1" class="ruleSelect">
+                    <option v-for="o in getNames()" :key="o">{{ o }}</option>
+                  </select>
+                  <p >-</p>
+                  <select v-model="avoidRules[parseInt(i)].student2" class="ruleSelect">
+                    <option v-for="o in getNames()" :key="o">{{ o }}</option>
+                  </select>
+                </div>
+                <button class="btn ruleBtn" @click="addRule(avoidRules)">Neue Regel</button>
+              </div>
+
+            <button class="btn subBtn" @click="nearbyRulesVisible = !nearbyRulesVisible">
+              Sollen nebeneinander&nbsp;&nbsp;
+              <i v-if="!nearbyRulesVisible" class="arrowdown" />
+              <i v-if="nearbyRulesVisible" class="arrowup" />
+            </button>
+              <div class="ruleTypeDiv" v-if="nearbyRulesVisible">
+                <div class="singleRuleDiv" v-for="(_, i) in nearbyRules.length" :key="i">
+                  <button class="deleteRule" @click="deleteRuleAt(parseInt(i), nearbyRules)"><i class='fas'>&#xf2ed;</i></button>
+                  <select v-model="nearbyRules[parseInt(i)].student1" class="ruleSelect">
+                    <option v-for="o in getNames()" :key="o">{{ o }}</option>
+                  </select>
+                  <p>-</p>
+                  <select v-model="nearbyRules[parseInt(i)].student2" class="ruleSelect">
+                    <option v-for="o in getNames()" :key="o">{{ o }}</option>
+                  </select>
+                </div>
+                <button class="btn ruleBtn" @click="addRule(nearbyRules)">Neue Regel</button>
+              </div>
+
+            <button class="btn subBtn" @click="firstRowRulesVisible = !firstRowRulesVisible">
+              Nach vorne&nbsp;&nbsp;
+              <i v-if="!firstRowRulesVisible" class="arrowdown" />
+              <i v-if="firstRowRulesVisible" class="arrowup" />
+            </button>
+              <div class="ruleTypeDiv" v-if="firstRowRulesVisible">
+                <div class="firstRowRulesWrap">
+                  <div class="singleRuleDiv firstRowRule" v-for="(_, i) in firstRowRules.length" :key="i">
+                    <button class="deleteRule" @click="deleteRuleAt(parseInt(i), firstRowRules)"><i class='fas'>&#xf2ed;</i></button>
+                    {{ firstRowRules[i] }}
+                  </div>
+                </div>
+                <select
+                  class="ruleSelect"
+                  @change="
+                    addFirstRow($event.target.value);
+                    $event.target.value = 0;
+                  "
+                >
+                  <option value="0" selected hidden>Schüler auswählen</option>
+
+                  <option v-for="o in getNames()" :key="o">{{ o }}</option>
+                </select>
+              </div>
+
+
+            <button class="btn subBtn" @click="notBackRulesVisible = !notBackRulesVisible">
+              <strong> Nicht </strong> nach hinten&nbsp;&nbsp;
+              <i v-if="!notBackRulesVisible" class="arrowdown" />
+              <i v-if="notBackRulesVisible" class="arrowup" />
+            </button>
+              <div class="ruleTypeDiv" v-if="notBackRulesVisible">
+                <div class="firstRowRulesWrap">
+                  <div class="singleRuleDiv firstRowRule" v-for="(_, i) in notBackRules.length" :key="i">
+                    <button class="deleteRule" @click="deleteRuleAt(parseInt(i), notBackRules)"><i class='fas'>&#xf2ed;</i></button>
+                    {{ notBackRules[i] }}
+                  </div>
+                </div>
+                <select
+                  class="ruleSelect"
+                  @change="
+                    addNotBackRow($event.target.value);
+                    $event.target.value = 0;
+                  "
+                >
+                  <option value="0" selected hidden>Schüler auswählen</option>
+
+                  <option v-for="o in getNames()" :key="o">{{ o }}</option>
+                </select>
+              </div>
+          </div>
+
+
+
+
+
         <div class="smallroom">
           <div class="tafelDivOuter">
-          <div class="removeStudent big" style="height: 0px;"/>
+          <div class="questionMark big"
+           @click="alert('Die Schüler können aus der Liste auf verfügbare Tische gezogen werden. Durch Klicken auf besetzte Tische kann festgelegt werden, ob der Platz bei einer Sitzplangenerierung so bleiben soll oder neu besetzt werden darf.')"
+          >?</div>
             <div class="tafelDivInner" :class="rotateText ? 'rotate' : ''" id="tafel" >Lehrer</div>
           <div 
             class="removeStudent big" title="Papierkorb" @click="alert('Ziehen Sie einen Schüler über den Papierkorb, um ihn zu löschen.')"
             @drop="onDropDelete($event)"
             @dragover.prevent
             @dragenter.prevent
-          >✖</div>
+          >
+            <i class='fas'>&#xf2ed;</i>
+          </div>
           </div>
           <div class="room">
             <div class="row" v-for="(_, y) in parseInt(gridHeight)" :key="y">
@@ -304,14 +417,16 @@
                 v-for="(_, x) in parseInt(gridWidth)"
                 :key="x"
               >
+              <i v-if="isManuallySelected(x,y)" class='fas lock'>&#xf023;</i>
+
                 <div 
                   :key="seats"
-                  :class="isMarked(x,y) ? 'marked' : ''"
+                  :class="isManuallySelected(x,y) ? 'manuallySelected' : isOccupied(x,y) ? 'occupied marked' : isMarked(x,y) ? 'marked' : ''"
                   class="seat"
-                  
+                  @click="tryManualSelection(x,y)"
                   v-on="isMarked(x,y) ? { drop: ($event) => onDrop($event, x, y), dragover: ($event) => $event.preventDefault() } : {drop: ($event) => $event.preventDefault(), dragover: ($event) => {} }"
                   @dragenter.prevent
-                  :draggable="isManuallySelected(x,y)"
+                  :draggable="isOccupied(x,y)"
                   @dragstart="startDragFromSeat($event, x, y)"
                 >
                   <p class="small" v-text="seats[x.toString() + ',' + y.toString()].name"></p> </div>

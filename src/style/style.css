@@ -239,6 +239,12 @@ https://loading.io/css/
 .room .row .column.marked {
   border: 1px solid black;
 }
+.room .row .column .lock {
+  position: absolute;
+  font-size: small;
+  transition: 0.3s;
+  padding: 3px;
+}
 .room .row .column .seat {
   width: 100%;
   height: 100%;
@@ -263,6 +269,13 @@ https://loading.io/css/
 }
 .room .row .column .seat.marked {
   background-color: #eee;
+}
+.room .row .column .seat.occupied {
+  cursor: move;
+}
+.room .row .column .seat.manuallySelected {
+  background-color: #ddd;
+  cursor: move;
 }
 .room button {
   width: 100%;
@@ -408,10 +421,12 @@ https://loading.io/css/
   padding-top: 5px;
   padding-bottom: 15px;
   border: 1px solid var(--primary-color);
+  margin-bottom: 20px;
 }
 .rightSide .studentListWrapper .names .studentList .list {
   padding-left: 10px;
   padding-right: 10px;
+  padding-bottom: 5px;
   margin-bottom: 10px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -426,6 +441,9 @@ https://loading.io/css/
   margin-top: 5px;
   height: 30px;
 }
+.rightSide .studentListWrapper .names .studentList .list .student input {
+  cursor: move;
+}
 .rightSide .studentListWrapper .names .studentList .list .student .dragStudent {
   cursor: move;
   margin-left: 5px;
@@ -434,13 +452,36 @@ https://loading.io/css/
   width: 30px;
   height: 30px;
 }
+.rightSide .studentListWrapper .names .newStudentContainer {
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
+  margin: 10px;
+  height: 30px;
+}
+.rightSide .studentListWrapper .names .newStudentContainer .newStudent {
+  margin-right: 10px;
+}
+.rightSide .studentListWrapper .names .newStudentContainer i {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  line-height: 30px;
+  font-size: 16px;
+  color: white;
+  background-color: darkred;
+  width: 30px;
+  height: 30px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.rightSide .studentListWrapper .names .newStudentContainer i i {
+  color: var(--light-text);
+}
 .rightSide .studentListWrapper .names #appendBox {
   margin-top: 10px;
   width: 16px;
   height: 16px;
-}
-.rightSide .studentListWrapper .names .newStudent {
-  margin: 10px;
 }
 .rightSide .studentListWrapper .names .fileInputThingy {
   border: 1px var(--primary-color) solid;
@@ -450,6 +491,9 @@ https://loading.io/css/
   background-color: var(--bg-color);
   color: black;
   padding: 0;
+}
+.rightSide .studentListWrapper .names .fileInputThingy span {
+  padding: 10px;
 }
 .rightSide .studentListWrapper .names #fileInputThingy {
   width: 0.1px;
@@ -473,6 +517,21 @@ https://loading.io/css/
 .rightSide .studentListWrapper .names input[type=file]::file-selector-button:hover {
   background-color: var(--primary-color);
 }
+.rightSide .studentListWrapper .ruleDiv {
+  margin-top: 75px;
+  padding-left: 50px;
+  padding-right: 50px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.rightSide .studentListWrapper .ruleDiv .singleRuleDiv {
+  display: flex;
+  flex-direction: row;
+}
+.rightSide .studentListWrapper .ruleDiv .btn {
+  width: 100%;
+}
 .rightSide .studentListWrapper .smallroom {
   margin-right: 25px;
   flex: 2;
@@ -494,7 +553,35 @@ https://loading.io/css/
   transition: 0.3s;
   cursor: pointer;
 }
+.rightSide .studentListWrapper .smallroom .removeStudent i {
+  color: var(--light-text);
+}
 .rightSide .studentListWrapper .smallroom .removeStudent.big {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  left: 0px;
+}
+.rightSide .studentListWrapper .smallroom .questionMark {
+  position: relative;
+  left: -5px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  margin-left: 5px;
+  line-height: 30px;
+  font-size: 22px;
+  color: var(--dark-text);
+  background-color: #eee;
+  width: 30px;
+  height: 30px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.rightSide .studentListWrapper .smallroom .questionMark:hover {
+  background-color: #ddd;
+}
+.rightSide .studentListWrapper .smallroom .questionMark.big {
   width: 50px;
   height: 50px;
   line-height: 50px;

@@ -73,7 +73,6 @@ export default defineComponent({
     
     AlgorithmWorker.worker.onmessage = event =>
     {
-      alert("hooo");
       if (event.data.done)
       {
         if (event.data.seats)
@@ -742,6 +741,21 @@ export default defineComponent({
         return false;
       }
       return this.seats[x.toString() + "," + y.toString()].manuallySelected;
+    },
+    isOccupied(x: number, y: number) {
+      if (!Object.keys(this.seats).includes(x.toString() + "," + y.toString())) {
+        return false;
+      }
+      return this.seats[x.toString() + "," + y.toString()].name != "";
+    },
+    tryManualSelection(x: number, y: number)
+    {
+      if (!this.isOccupied(x, y))
+      {
+        return;
+      }
+      const seat = this.seats[x.toString() + "," + y.toString()];
+      seat.manuallySelected = !seat.manuallySelected;
     },
     // instantiateList(maxGridWidth: number, maxGridHeight: number) {
     //   const fields: Sitzplatz[] = [];

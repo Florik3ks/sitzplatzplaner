@@ -9,10 +9,9 @@ import { Algo2 } from "./helper/Algo2";
 
 // import { sendMessage } from './helper/WorkerHelper';
 import AlgorithmWorker from '@/AlgoWorker';
-
 import { /*toBlob, toPng, toJpeg,*/ toCanvas } from 'html-to-image';
-// import  download  from 'downloadjs';
 
+import html2canvas from 'html2canvas';
 
 export default defineComponent({
   name: "Sitzplatzplaner",
@@ -49,7 +48,6 @@ export default defineComponent({
       avoidRules: [] as Rule[],
       firstRowRules: [] as string[],
       notBackRules: [] as string[],
-      isMouseDown: false,
       presetCount: 4,
       fieldBtnContextMenuOpen: false,
       contextMenuTop: "0px",
@@ -272,7 +270,7 @@ export default defineComponent({
         this.removeStudentFromSeat();
       }
     },
-    downloadPlan()
+    async downloadPlan()
     {
       const tafel = document.getElementById('tafel');
       if (tafel)
@@ -291,10 +289,24 @@ export default defineComponent({
         // needed in .then function below, access via "this" is not possible there
         let className = this.className;
         const downloadPlanFromTeacherPerspective = this.downloadPlanFromTeacherPerspective;
+        // if (node)
+        // {
+        //   html2canvas(node).then(canvas =>
+        //   {
 
+        //   }).catch((error) =>
+        //   {
+        //     console.log("Erorr descargando reporte visual")
+        //     alert("Error descargando el reporte visual")
+        //   });
+
+        // }
+        await new Promise(res => setTimeout(res, 250));
+        const w = Math.max(1280, 150 * this.gridWidth);
+        const h = Math.max(720, 105 * this.gridHeight);
         if (node)
         {
-          toCanvas(node)
+          await html2canvas(node, {scrollY: -window.scrollY, windowWidth: w, windowHeight: h})
             .then(function (canvas)
             {
               // inspired by https://stackoverflow.com/a/27644822
@@ -352,13 +364,6 @@ export default defineComponent({
       {
         platz.name = ""
         platz.manuallySelected = false;
-      }
-    },
-    onFieldClickWhenMouseIsDown(x: number, y: number)
-    {
-      if (this.isMouseDown)
-      {
-        this.onFieldClick(x, y);
       }
     },
     preventctxmenudefault(e: Event)

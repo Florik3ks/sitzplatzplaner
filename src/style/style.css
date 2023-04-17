@@ -201,6 +201,13 @@ https://loading.io/css/
   justify-content: space-between;
   padding-bottom: 25px;
 }
+@media screen and (max-width: 1025px) {
+  .tafelDivOuter {
+    justify-content: center;
+    width: 100%;
+    padding-bottom: 5px;
+  }
+}
 .tafelDivOuter .tafelDivInner {
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -213,6 +220,11 @@ https://loading.io/css/
   background-color: var(--secondary-color);
   color: var(--light-text);
 }
+@media screen and (max-width: 1025px) {
+  .tafelDivOuter .tafelDivInner {
+    width: 50%;
+  }
+}
 
 .room {
   border: 1px solid var(--secondary-color);
@@ -220,6 +232,15 @@ https://loading.io/css/
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+.room.picture {
+  border: none;
+}
+@media screen and (max-width: 1025px) {
+  .room {
+    overflow: auto;
+    width: calc(100vw - 40px);
+  }
 }
 .room .row {
   flex: 1;
@@ -232,6 +253,24 @@ https://loading.io/css/
   border: 1px solid #ddd;
   border-collapse: collapse;
   display: flex;
+}
+@media screen and (max-width: 1025px) {
+  .room .row .column {
+    min-width: 100px;
+    min-height: 100px;
+  }
+}
+@media screen and (max-width: 800px) {
+  .room .row .column {
+    min-width: 75px;
+    min-height: 75px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .room .row .column {
+    min-width: 50px;
+    min-height: 50px;
+  }
 }
 .room .row .column.picture {
   border: none;
@@ -251,6 +290,24 @@ https://loading.io/css/
   display: flex;
   justify-content: center;
   align-items: center;
+}
+@media screen and (max-width: 1025px) {
+  .room .row .column .seat {
+    min-width: 100px;
+    min-height: 100px;
+  }
+}
+@media screen and (max-width: 800px) {
+  .room .row .column .seat {
+    min-width: 75px;
+    min-height: 75px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .room .row .column .seat {
+    min-width: 50px;
+    min-height: 50px;
+  }
 }
 .room .row .column .seat p {
   padding: 5px;
@@ -292,26 +349,50 @@ https://loading.io/css/
   flex-direction: column;
   height: 100%;
 }
+@media screen and (max-width: 1025px) {
+  .rightSide .sitzplanWrapper {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+}
 .rightSide .sitzplanWrapper #sitzplan {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
+@media screen and (max-width: 1025px) and (min-height: 400px) {
+  .rightSide .sitzplanWrapper #sitzplan {
+    max-height: calc(100% - 220px);
+  }
+}
 .rightSide .sitzplanWrapper #sitzplan .sitzplatzdiv {
   flex: 1;
+}
+@media screen and (max-width: 1025px) {
+  .rightSide .sitzplanWrapper #sitzplan .sitzplatzdiv {
+    height: calc(100% - 100px);
+  }
 }
 .rightSide .sitzplanWrapper .planSettingsContainer {
   padding-top: 20px;
 }
-.rightSide .sitzplanWrapper .planSettingsContainer .buttons {
+.rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   justify-content: space-between;
 }
-.rightSide .sitzplanWrapper .planSettingsContainer .buttons .openClose {
+@media screen and (max-width: 1025px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+.rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose {
+  transition: 0.3s;
   z-index: 1;
   cursor: pointer;
-  height: 50px;
+  height: 70px;
   width: 250px;
   background-color: var(--secondary-color);
   border-radius: 10px 10px 0px 0px;
@@ -323,15 +404,48 @@ https://loading.io/css/
   display: flex;
   align-items: center;
   justify-content: center;
+  bottom: 0px;
 }
-.rightSide .sitzplanWrapper .planSettingsContainer .buttons .openClose .text {
+.rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose:hover {
+  filter: brightness(150%);
+}
+@media screen and (max-width: 1025px) and (min-height: 400px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose.open {
+    bottom: 241px;
+  }
+}
+@media screen and (max-width: 1025px) and (max-height: 400px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose.open {
+    bottom: 141px;
+  }
+}
+@media screen and (max-width: 400px) and (min-height: 400px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose.open {
+    bottom: 421px;
+  }
+}
+.rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose .text {
   color: var(--light-text);
   margin-left: 10px;
 }
-.rightSide .sitzplanWrapper .planSettingsContainer .buttons .generatePlanButton {
+.rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+@media screen and (max-width: 1025px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons {
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0px;
+  }
+}
+.rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button {
+  margin-left: 20px;
   cursor: pointer;
   position: relative;
-  bottom: 10px;
   height: 50px;
   width: 250px;
   background-color: var(--primary-color);
@@ -347,13 +461,25 @@ https://loading.io/css/
   justify-content: center;
   transition: 0.3s;
 }
-.rightSide .sitzplanWrapper .planSettingsContainer .buttons .generatePlanButton:hover {
+@media screen and (max-width: 1200px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button {
+    width: 175px;
+  }
+}
+@media screen and (max-width: 1025px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button {
+    margin-bottom: 15px;
+    width: 100%;
+    margin-left: 0px;
+  }
+}
+.rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button:hover {
   background-color: var(--primary-color-light);
 }
-.rightSide .sitzplanWrapper .planSettingsContainer .buttons .generatePlanButton:hover .text {
+.rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button:hover .text {
   color: var(--dark-text);
 }
-.rightSide .sitzplanWrapper .planSettingsContainer .buttons .generatePlanButton .text {
+.rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button .text {
   color: var(--light-text);
   margin-left: 10px;
 }
@@ -361,19 +487,51 @@ https://loading.io/css/
   transition: 0.3s;
   height: 0px;
   justify-content: space-evenly;
+  overflow: clip;
+  display: flex;
+}
+@media screen and (max-width: 1025px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    background-color: var(--bg-color);
+  }
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .planSettings.open {
-  display: flex;
   border: 1px solid var(--secondary-color);
   height: 200px;
   padding-bottom: 50px;
   padding: 10px;
   padding-left: 0px;
 }
+@media screen and (max-width: 1025px) and (min-height: 400px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings.open {
+    height: 220px;
+  }
+}
+@media screen and (max-width: 1025px) and (max-height: 400px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings.open {
+    height: 120px;
+  }
+}
+@media screen and (max-width: 400px) and (min-height: 400px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings.open {
+    height: 400px;
+    flex-direction: column-reverse;
+    overflow-y: auto;
+  }
+}
 .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .presets {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+@media screen and (max-width: 800px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .presets {
+    overflow-y: auto;
+    display: block;
+  }
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .presets .presetBtn {
   height: -moz-fit-content;
@@ -383,6 +541,11 @@ https://loading.io/css/
   background-color: white;
   border: none;
   transition: 0.3s;
+}
+@media screen and (max-width: 800px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .presets .presetBtn {
+    width: 40%;
+  }
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .presets .presetBtn :hover {
   filter: brightness(0.75);
@@ -399,6 +562,26 @@ https://loading.io/css/
   align-items: center;
   justify-content: center;
   padding: 10px;
+}
+@media screen and (max-width: 500px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .sliderDiv .inpSlider {
+    width: 175px;
+  }
+}
+@media screen and (max-width: 450px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .sliderDiv .inpSlider {
+    width: 150px;
+  }
+}
+@media screen and (max-width: 400px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .sliderDiv .inpSlider {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 800px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .horizontalSlider {
+    margin-bottom: 15px;
+  }
 }
 .rightSide .studentListWrapper {
   display: flex;
@@ -434,6 +617,11 @@ https://loading.io/css/
   max-height: calc(100vh - 250px);
   display: flex;
   flex-direction: column;
+}
+@media screen and (max-height: 400px) {
+  .rightSide .studentListWrapper .names .studentList .list {
+    max-height: 100vh;
+  }
 }
 .rightSide .studentListWrapper .names .studentList .list .student {
   display: flex;

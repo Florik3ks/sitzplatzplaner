@@ -13,6 +13,7 @@
     "downloadjs": "^1.4.7",
     "file-saver": "^2.0.5",
     "html-to-image": "^1.9.0",
+    "html2canvas": "^1.4.1",
     "vue": "^3.0.0",
     "vuex": "^4.0.0-0",
     "worker-plugin": "^5.0.1"

@@ -12,7 +12,7 @@
     <div class="lds-default" ><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
   <!-- <br/><button class="btn" @click="cancelAlgorithm"> Berechnung abbrechen </button> -->
   </div>
-  <div @mousedown.left="isMouseDown = true" @mouseup.left="isMouseDown = false" class="wrapperDiv">
+  <div class="wrapperDiv">
 
     <div class="sideBar">
       
@@ -20,7 +20,8 @@
       <div class="tabContainer">
           <div :class="selectedTab == 0 ? 'tab selected' : 'tab'" @click="selectedTab = 0">Sitzplan</div>
           <div :class="selectedTab == 1 ? 'tab selected' : 'tab'" @click="selectedTab = 1">Schüler</div>
-          <div :class="selectedTab == 2 ? 'tab selected' : 'tab'" @click="selectedTab = 2">Einstellungen</div>
+          <div :class="selectedTab == 2 ? 'tab selected' : 'tab'" @click="selectedTab = 2">Sitzplanregeln</div>
+          <div :class="selectedTab == 3 ? 'tab selected' : 'tab'" @click="selectedTab = 3">Einstellungen</div>
       </div>
       <img >
     </div>
@@ -185,13 +186,14 @@
 
 
     <div class="rightSide">
+      <!-- <i class="fas">&#xf0c9;</i> -->
       <div class="sitzplanWrapper" v-if="selectedTab == 0">
         <div id="sitzplan" >
           <div class="tafelDivOuter">
             <div class="tafelDivInner" :class="rotateText ? 'rotate' : ''" id="tafel" >Lehrer</div>
           </div>
           <div class="sitzplatzdiv">
-            <div class="room">
+            <div class="room" :class="takingPicture ? 'picture' : ''">
               <div class="row" v-for="(_, y) in parseInt(gridHeight)" :key="y">
                 <div 
                   :class="isMarked(x,y) ? 'marked' : takingPicture ? 'picture' : ''"
@@ -210,10 +212,6 @@
                     :class="isMarked(x,y) ? 'marked' : takingPicture ? 'picture' : ''"
                     class="seat"
                     @mousedown.left="onFieldClick(x, y)"
-                    @mouseenter="onFieldClickWhenMouseIsDown(x, y)"
-                    @contextmenu.prevent="onFieldContextMenu($event, x,y)"
-                    @touchstart="touchstart(x,y)"
-                    @touchend="touchend($event, x,y)"
                     :style="{
                       'font-size': 'medium',
                       //'background-color': isMarked(x, y) ? (isManuallySelected(x,y) ? highlightManuallySelected ? 'skyblue' : 'lightblue' : 'lightblue') : 'white',
@@ -230,14 +228,16 @@
         </div>
 
         <div class="planSettingsContainer">
-          <div class="buttons">
-            <div class="openClose"  @click="planSettingsOpen = !planSettingsOpen">
+          <div class="buttonsContainer">
+            <div class="buttons">
+              <button class="button" @click="computePlan"><span class="text">Plan generieren</span></button>
+              <button class="button" @click="downloadPlan"><span class="text">Plan herunterladen</span></button>
+            </div>
+            <div class="openClose" :class="planSettingsOpen ? 'open' : ''" @click="planSettingsOpen = !planSettingsOpen">
               <i v-if="planSettingsOpen" class="arrowdown" />
               <i v-if="!planSettingsOpen" class="arrowup" />
               <span class="text">Raumeinstellungen</span>
             </div>
-            <button class="generatePlanButton" @click="downloadPlan"><span class="text">Plan herunterladen</span></button>
-            <button class="generatePlanButton" @click="computePlan"><span class="text">Plan generieren</span></button>
           </div>
           <div class="planSettings" :class="planSettingsOpen ? 'open' : ''">
             <div class="presets">
@@ -298,7 +298,57 @@
 
 
 
+        <div class="smallroom">
+          <div class="tafelDivOuter">
+          <div class="questionMark big"
+           @click="alert('Die Schüler können aus der Liste auf verfügbare Tische gezogen werden. Durch Klicken auf besetzte Tische kann festgelegt werden, ob der Platz bei einer Sitzplangenerierung so bleiben soll oder neu besetzt werden darf.')"
+          >?</div>
+            <div class="tafelDivInner" :class="rotateText ? 'rotate' : ''" id="tafel" >Lehrer</div>
+          <div 
+            class="removeStudent big" title="Papierkorb" @click="alert('Ziehen Sie einen Schüler über den Papierkorb, um ihn zu löschen.')"
+            @drop="onDropDelete($event)"
+            @dragover.prevent
+            @dragenter.prevent
+          >
+            <i class='fas'>&#xf2ed;</i>
+          </div>
+          </div>
+          <div class="room">
+            <div class="row" v-for="(_, y) in parseInt(gridHeight)" :key="y">
+              <div 
+                :class="isMarked(x,y) ? 'marked' : ''"
+                class="column"
+                v-for="(_, x) in parseInt(gridWidth)"
+                :key="x"
+              >
+              <i v-if="isManuallySelected(x,y)" class='fas lock'>&#xf023;</i>
 
+                <div 
+                  :key="seats"
+                  :class="isManuallySelected(x,y) ? 'manuallySelected' : isOccupied(x,y) ? 'occupied marked' : isMarked(x,y) ? 'marked' : ''"
+                  class="seat"
+                  @click="tryManualSelection(x,y)"
+                  v-on="isMarked(x,y) ? { drop: ($event) => onDrop($event, x, y), dragover: ($event) => $event.preventDefault() } : {drop: ($event) => $event.preventDefault(), dragover: ($event) => {} }"
+                  @dragenter.prevent
+                  :draggable="isOccupied(x,y)"
+                  @dragstart="startDragFromSeat($event, x, y)"
+                >
+                  <p class="small" v-text="seats[x.toString() + ',' + y.toString()].name"></p> </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- <div class="studentFieldWrap">
+            <input class="className" type="text" placeholder="Name der Klasse" v-model="className"/>
+            <textarea v-if="studentFieldVisible" class="studentField" v-model="studentFieldValue" placeholder="Name 1" @blur="checkForDoubleNames"> </textarea>
+
+
+        </div> -->
+
+      </div>
+
+      <div class="settingsWrapper" v-if="selectedTab == 2">
           <div class="ruleDiv">
             <button class="btn subBtn" @click="avoidRulesVisible = !avoidRulesVisible">
               Dürfen <strong>nicht</strong> nebeneinander&nbsp;&nbsp;
@@ -389,67 +439,13 @@
                 </select>
               </div>
           </div>
-
-
-
-
-
-        <div class="smallroom">
-          <div class="tafelDivOuter">
-          <div class="questionMark big"
-           @click="alert('Die Schüler können aus der Liste auf verfügbare Tische gezogen werden. Durch Klicken auf besetzte Tische kann festgelegt werden, ob der Platz bei einer Sitzplangenerierung so bleiben soll oder neu besetzt werden darf.')"
-          >?</div>
-            <div class="tafelDivInner" :class="rotateText ? 'rotate' : ''" id="tafel" >Lehrer</div>
-          <div 
-            class="removeStudent big" title="Papierkorb" @click="alert('Ziehen Sie einen Schüler über den Papierkorb, um ihn zu löschen.')"
-            @drop="onDropDelete($event)"
-            @dragover.prevent
-            @dragenter.prevent
-          >
-            <i class='fas'>&#xf2ed;</i>
-          </div>
-          </div>
-          <div class="room">
-            <div class="row" v-for="(_, y) in parseInt(gridHeight)" :key="y">
-              <div 
-                :class="isMarked(x,y) ? 'marked' : ''"
-                class="column"
-                v-for="(_, x) in parseInt(gridWidth)"
-                :key="x"
-              >
-              <i v-if="isManuallySelected(x,y)" class='fas lock'>&#xf023;</i>
-
-                <div 
-                  :key="seats"
-                  :class="isManuallySelected(x,y) ? 'manuallySelected' : isOccupied(x,y) ? 'occupied marked' : isMarked(x,y) ? 'marked' : ''"
-                  class="seat"
-                  @click="tryManualSelection(x,y)"
-                  v-on="isMarked(x,y) ? { drop: ($event) => onDrop($event, x, y), dragover: ($event) => $event.preventDefault() } : {drop: ($event) => $event.preventDefault(), dragover: ($event) => {} }"
-                  @dragenter.prevent
-                  :draggable="isOccupied(x,y)"
-                  @dragstart="startDragFromSeat($event, x, y)"
-                >
-                  <p class="small" v-text="seats[x.toString() + ',' + y.toString()].name"></p> </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-        <!-- <div class="studentFieldWrap">
-            <input class="className" type="text" placeholder="Name der Klasse" v-model="className"/>
-            <textarea v-if="studentFieldVisible" class="studentField" v-model="studentFieldValue" placeholder="Name 1" @blur="checkForDoubleNames"> </textarea>
-
-
-        </div> -->
-
       </div>
 
-      <div class="settingsWrapper" v-if="selectedTab == 2">
+      <div class="settingsWrapper" v-if="selectedTab == 3">
         <span>
         TODO
         </span>
       </div>
-
     </div>
 
   </div>

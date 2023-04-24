@@ -42,7 +42,6 @@ export default defineComponent({
 
       newStudent: "",
       students: ["a", "b"] as string[],
-      studentFieldValue: "", // old
 
       nearbyRules: [] as Rule[],
       avoidRules: [] as Rule[],
@@ -61,7 +60,6 @@ export default defineComponent({
       downloadPlanFromTeacherPerspective: true,
       takingPicture: false,
       algorithmRunning: false,
-      // seats2: this.instantiateList(maxGridWidth, maxGridHeight) as Sitzplatz[],
       seats: this.instantiateDict(maxGridWidth, maxGridHeight),
     };
   },
@@ -709,7 +707,6 @@ export default defineComponent({
         this.students = [];
       }
       const lines = data.split("\n").filter((x) => x !== null && x !== "");
-      this.studentFieldValue = "";
       for (let i = 0; i < lines.length; i++) {
         if (i == 0) {
           this.className = lines[i].split(RegExp(";|,")).filter((x) => x !== null && x !== "")[0];
@@ -851,16 +848,9 @@ export default defineComponent({
         }
         newNames.push(name);
       });
-
-      this.studentFieldValue = newNames.join("\n")
     },
     getNames()
     {
-      // const names = this.studentFieldValue.split("\n").filter((x) => x !== null && x !== "");
-      // for (let i = 0; i < names.length; i++) {
-      //   names[i] = names[i].trim();        
-      // }
-      // clone names, idk why i have to do that
       const names = [] as string[];
       for (let index = 0; index < this.students.length; index++) {
         const element = this.students[index];

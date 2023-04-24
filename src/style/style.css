@@ -42,7 +42,7 @@
 
 .arrowup,
 .arrowdown {
-  border: solid var(--light-text);
+  border: solid var(--dark-text);
   border-width: 0 3px 3px 0;
   padding: 3px;
   margin-right: 2%;
@@ -178,21 +178,26 @@ https://loading.io/css/
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
-  color: var(--light-text);
+  color: var(--dark-text);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 25px;
   height: 50px;
   background-color: var(--secondary-color);
+  border-radius: 5px;
   transition: 0.3s;
 }
 .sideBar .tabContainer .tab.selected {
-  background-color: var(--primary-color);
+  background-color: var(--primary-color-light);
+}
+.sideBar .tabContainer :hover {
+  color: var(--darker-text);
 }
 .sideBar .tabContainer :hover:not(.selected) {
   cursor: pointer;
   background-color: var(--primary-color-light);
+  filter: brightness(0.9);
   color: var(--dark-text);
 }
 
@@ -218,7 +223,8 @@ https://loading.io/css/
   justify-content: center;
   height: 50px;
   background-color: var(--secondary-color);
-  color: var(--light-text);
+  color: var(--dark-text);
+  border-radius: 5px;
 }
 @media screen and (max-width: 1025px) {
   .tafelDivOuter .tafelDivInner {
@@ -227,11 +233,13 @@ https://loading.io/css/
 }
 
 .room {
+  scrollbar-width: thin;
   border: 1px solid var(--secondary-color);
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  border-radius: 5px;
 }
 .room.picture {
   border: none;
@@ -246,6 +254,18 @@ https://loading.io/css/
   flex: 1;
   display: flex;
   flex-direction: row;
+}
+.room .row:first-child :first-child {
+  border-top-left-radius: 5px;
+}
+.room .row:first-child :last-child {
+  border-top-right-radius: 5px;
+}
+.room .row:last-child :first-child {
+  border-bottom-left-radius: 5px;
+}
+.room .row:last-child :last-child {
+  border-bottom-right-radius: 5px;
 }
 .room .row .column {
   width: 0px;
@@ -407,7 +427,7 @@ https://loading.io/css/
   bottom: 0px;
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose:hover {
-  filter: brightness(150%);
+  filter: brightness(0.9);
 }
 @media screen and (max-width: 1025px) and (min-height: 400px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose.open {
@@ -425,7 +445,7 @@ https://loading.io/css/
   }
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose .text {
-  color: var(--light-text);
+  color: var(--dark-text);
   margin-left: 10px;
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons {
@@ -489,13 +509,18 @@ https://loading.io/css/
   justify-content: space-evenly;
   overflow: clip;
   display: flex;
+  background-color: var(--bg-color);
+}
+@media screen and (min-width: 1026px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .planSettings {
+    border-top-right-radius: 5px;
+  }
 }
 @media screen and (max-width: 1025px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .planSettings {
     position: absolute;
     left: 0px;
     bottom: 0px;
-    background-color: var(--bg-color);
   }
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .planSettings.open {
@@ -520,6 +545,7 @@ https://loading.io/css/
     height: 400px;
     flex-direction: column-reverse;
     overflow-y: auto;
+    border-top-right-radius: 0px;
   }
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .planSettings .presets {
@@ -539,6 +565,7 @@ https://loading.io/css/
   margin: 10px;
   padding-top: 5px;
   background-color: white;
+  border-radius: 5px;
   border: none;
   transition: 0.3s;
 }

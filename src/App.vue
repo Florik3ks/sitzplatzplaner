@@ -27,6 +27,8 @@ export default defineComponent({
   color: #2c3e50;
   overflow: hidden;
   height: 100%;
+  scrollbar-width: thin;
+  
 }
 
 html, body{
@@ -37,11 +39,12 @@ html, body{
 }
 
 :root {
-    --primary-color-light: #add04f;
+    --primary-color-light: #bde05c;
     --primary-color: #759821;
-    --secondary-color: #666;
+    --secondary-color: #ddd;
     --bg-color: #eee;
     --light-text: #eee;
-    --dark-text: #333;
+    --dark-text: #444;
+    --darker-text: #222;
 } 
 </style>

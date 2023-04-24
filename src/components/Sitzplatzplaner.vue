@@ -268,6 +268,7 @@
           >
             <div class="list">
               <div v-for="(student, i) in students" :key="i" class="student" draggable="true" @dragstart="startDrag($event, student)">
+                <div class="number">{{i}}.</div>
                 <input type="text" v-model="students[i]" @change="studentChange(i)" title="In den Raum ziehen"/> 
                 <!-- <div class="removeStudent" @click="removeStudent(i)" title="Schüler löschen">✖</div> -->
                 <!-- <div class="dragStudent"  title="In den Raum ziehen">↳</div> -->

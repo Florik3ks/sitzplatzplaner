@@ -14,16 +14,23 @@
   </div>
   <div class="wrapperDiv">
 
-    <div class="sideBar">
-      
-      <img :src="require(`@/assets/GMO_Schullogo.png`)" class="logo" />
+    <div class="sideBar" :class="openSidebar ? 'forceopen' : ''">
+      <div class="closeSidebar" @click="openSidebar = false">
+        <i class="fas">&#xf00d;</i>
+      </div>
+      <div class="logoContainer">
+        <img :src="require(`@/assets/logo.png`)" class="logo" />
+      </div>
       <div class="tabContainer">
-          <div :class="selectedTab == 0 ? 'tab selected' : 'tab'" @click="selectedTab = 0">Sitzplan</div>
-          <div :class="selectedTab == 1 ? 'tab selected' : 'tab'" @click="selectedTab = 1">Schüler</div>
-          <div :class="selectedTab == 2 ? 'tab selected' : 'tab'" @click="selectedTab = 2">Sitzplanregeln</div>
-          <div :class="selectedTab == 3 ? 'tab selected' : 'tab'" @click="selectedTab = 3">Einstellungen</div>
+          <div :class="selectedTab == 0 ? 'tab selected' : 'tab'" @click="selectedTab = 0; openSidebar = false">Sitzplan</div>
+          <div :class="selectedTab == 1 ? 'tab selected' : 'tab'" @click="selectedTab = 1; openSidebar = false">Schüler</div>
+          <div :class="selectedTab == 2 ? 'tab selected' : 'tab'" @click="selectedTab = 2; openSidebar = false">Sitzplanregeln</div>
+          <div :class="selectedTab == 3 ? 'tab selected' : 'tab'" @click="selectedTab = 3; openSidebar = false">Einstellungen</div>
       </div>
       <img >
+    </div>
+    <div class = "openSidebar" @click="openSidebar = true" :class="openSidebar ? 'open' : ''">
+      <i class="fas">&#xf0c9;</i>
     </div>
     <!-- <div class="sideDiv">
 
@@ -185,8 +192,8 @@
 
 
 
-    <div class="rightSide">
-      <!-- <i class="fas">&#xf0c9;</i> -->
+    <div class="rightSide" >
+
       <div class="sitzplanWrapper" v-if="selectedTab == 0">
         <div id="sitzplan" >
           <div class="tafelDivOuter">
@@ -260,41 +267,43 @@
       <div class="studentListWrapper" v-if="selectedTab == 1">
 
         <div class="names">
-          <input class="className" type="text" placeholder="Name der Klasse" v-model="className" />
-          <div class="studentList" v-if="students.length > 0"
-            @drop="onStudentListDrop($event)"
-            @dragover.prevent
-            @dragenter.prevent
-          >
-            <div class="list">
-              <div v-for="(student, i) in students" :key="i" class="student" draggable="true" @dragstart="startDrag($event, student)">
-                <div class="number">{{i}}.</div>
-                <input type="text" v-model="students[i]" @change="studentChange(i)" title="In den Raum ziehen"/> 
-                <!-- <div class="removeStudent" @click="removeStudent(i)" title="Schüler löschen">✖</div> -->
-                <!-- <div class="dragStudent"  title="In den Raum ziehen">↳</div> -->
+          <div class="namesInnerWrapper">
+            <input class="className" type="text" placeholder="Name der Klasse" v-model="className" />
+            <div class="studentList" v-if="students.length > 0"
+              @drop="onStudentListDrop($event)"
+              @dragover.prevent
+              @dragenter.prevent
+            >
+              <div class="list">
+                <div v-for="(student, i) in students" :key="i" class="student" draggable="true" @dragstart="startDrag($event, student)">
+                  <div class="number">{{i + 1}}.</div>
+                  <input type="text" v-model="students[i]" @change="studentChange(i)" title="In den Raum ziehen"/> 
+                  <!-- <div class="removeStudent" @click="removeStudent(i)" title="Schüler löschen">✖</div> -->
+                  <!-- <div class="dragStudent"  title="In den Raum ziehen">↳</div> -->
+                </div>
               </div>
-            </div>
 
-            <div class="newStudentContainer">
-              <input type="text" @change="addNewStudent" v-model="newStudent" pattern="[a-zA-Z0-9 ]+" required placeholder="Neuer Schüler" class="newStudent">
-              <div 
-                class="removeStudent big" title="Papierkorb" @click="alert('Ziehen Sie einen Schüler über den Papierkorb, um ihn zu löschen.')"
-                @drop="onDropDelete($event)"
-                @dragover.prevent
-                @dragenter.prevent
-              >
-              <i class='fas'>&#xf2ed;</i>
+              <div class="newStudentContainer">
+                <div 
+                  class="removeStudent big" title="Papierkorb" @click="alert('Ziehen Sie einen Schüler über den Papierkorb, um ihn zu löschen.')"
+                  @drop="onDropDelete($event)"
+                  @dragover.prevent
+                  @dragenter.prevent
+                >
+                <i class='fas'>&#xf2ed;</i>
+                </div>
+                <input type="text" @change="addNewStudent" v-model="newStudent" pattern="[a-zA-Z0-9 ]+" required placeholder="Neuer Schüler" class="newStudent">
               </div>
             </div>
+            <div title="Soll der Dateiinhalt angehängt werden oder die bisherige Liste überschreiben?">
+              <input id="appendBox" type="checkbox" v-model="appendFromFile"/>
+              <label for="appendBox">Dateiinhalt anhängen?</label>
+            </div>
+            <input type="file" accept="text/csv,application/csv" id="fileInputThingy" @change="loadStudentFile($event)" />
+            <button class="fileInputThingy" @click="confirmLoad($event)">
+              <label for="fileInputThingy"><span style="line-height: 31px"> Datei auswählen </span></label>
+            </button>
           </div>
-          <div title="Soll der Dateiinhalt angehängt werden oder die bisherige Liste überschreiben?">
-            <input id="appendBox" type="checkbox" v-model="appendFromFile"/>
-            <label for="appendBox">Dateiinhalt anhängen?</label>
-          </div>
-          <input type="file" accept="text/csv,application/csv" id="fileInputThingy" @change="loadStudentFile($event)" />
-          <button class="fileInputThingy" @click="confirmLoad($event)">
-            <label for="fileInputThingy"><span style="line-height: 31px"> Datei auswählen </span></label>
-          </button>
         </div>
 
 
@@ -322,7 +331,6 @@
                 v-for="(_, x) in parseInt(gridWidth)"
                 :key="x"
               >
-              <i v-if="isManuallySelected(x,y)" class='fas lock'>&#xf023;</i>
 
                 <div 
                   :key="seats"
@@ -334,6 +342,8 @@
                   :draggable="isOccupied(x,y)"
                   @dragstart="startDragFromSeat($event, x, y)"
                 >
+                  <i v-if="isManuallySelected(x,y)" class='fas lock'>&#xf023;</i>
+
                   <p class="small" v-text="seats[x.toString() + ',' + y.toString()].name"></p> </div>
               </div>
             </div>

@@ -23,6 +23,7 @@ export default defineComponent({
     return {
       // navigation tabs
       selectedTab: 0,
+      openSidebar: false,
       // grid size data
       maxGridWidth: maxGridWidth,
       maxGridHeight: maxGridHeight,

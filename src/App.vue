@@ -46,5 +46,6 @@ html, body{
     --light-text: #eee;
     --dark-text: #444;
     --darker-text: #222;
+    --border-radius: 5px;
 } 
 </style>

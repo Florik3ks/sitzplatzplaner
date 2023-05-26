@@ -41,7 +41,7 @@
 //     padding-top: 5px;
 //     padding-right: 15px;
 //     border: 3px solid darkslateblue;
-//     border-radius: 5px;
+//     border-radius: var(--border-radius);
 //     width: 50%;
 //     display: inline-block;
 //     overflow-x: hidden;
@@ -52,7 +52,7 @@
 //     background-color: slateblue;
 //     color: white;
 //     border: 2px solid slateblue;
-//     border-bottom-left-radius: 5px;
+//     border-bottom-left-radius: var(--border-radius);
 //     padding: 10px;
 //     padding-top: 7px;
 //     transition: 0.3s;
@@ -69,7 +69,7 @@
 //     font-size: xx-large;
 //     background-color: transparent;
 //     border: none;
-//     border-radius: 5px;
+//     border-radius: var(--border-radius);
 //     transition: 0.3s;
 //     float: right;
 //     color: slateblue;
@@ -91,7 +91,7 @@
 //     padding-top: 5px;
 //     background-color: white;
 //     border: darkslateblue 2px solid;
-//     border-radius: 5px;
+//     border-radius: var(--border-radius);
 //     transition: 0.3s;
 // }
 
@@ -121,7 +121,7 @@
 //     color: darkgreen;
 //     border-color: var(--color);
 //     height: 33px;
-//     border-radius: 5px;
+//     border-radius: var(--border-radius);
 //     margin-bottom: 5px;
 //     padding-top: 10px;
 // }
@@ -197,7 +197,7 @@
 //     height: 100%;
 //     font-size: xx-large;
 //     border: none;
-//     border-radius: 5px;
+//     border-radius: var(--border-radius);
 //     transition: 0.3s;
 //     float: right;
 //     color: slateblue;
@@ -228,7 +228,7 @@
 // .ruleBtn {
 //     background-color: white;
 //     border: 1px solid slateblue;
-//     border-radius: 5px;
+//     border-radius: var(--border-radius);
 // }
 
 // .submit {
@@ -314,7 +314,7 @@
 // .className:focus {
 //     outline: none !important;
 //     border: 2px solid slateblue;
-//     border-radius: 5px;
+//     border-radius: var(--border-radius);
 // }
 
 
@@ -568,22 +568,90 @@ https://loading.io/css/
 
 
 
+.openSidebar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding: 10px;
+    background-color: var(--secondary-color);
+    border-bottom-right-radius: var(--border-radius);
+    transition: 0.3s;
+    user-select: none;
+    width: 20px;
+    cursor: pointer;
+
+    &:hover {
+        filter: brightness(.9);
+    }
+
+    &.open {
+        display: none;
+    }
+
+    @media screen and (min-width: 1026px) {
+        display: none;
+    }
+}
 
 .sideBar {
-    width: 250px;
+    transition: .3s;
+    min-width: 250px;
     background-color: var(--bg-color);
     display: flex;
     flex-direction: column;
     padding: 20px;
+    position: relative;
 
-    .logo {
-        padding: 50px;
-        padding-top: 10px;
-        padding-bottom: 20px;
+    .logoContainer {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+
+        .logo {
+            display: block;
+            max-width: calc(222px / 2);
+            max-height: calc(173px / 2);
+            width: auto;
+            height: auto;
+
+        }
+    }
+
+    .closeSidebar {
+        padding: 10px;
+        background-color: var(--secondary-color);
+        border-bottom-left-radius: var(--border-radius);
+        transition: 0.3s;
+        user-select: none;
+        cursor: pointer;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+
+        &:hover {
+            filter: brightness(.9);
+        }
+
+        width: 20px;
+
+        @media screen and (min-width: 1026px) {
+            display: none;
+        }
     }
 
     @media screen and (max-width: 1025px) {
-        display: none;
+        &:not(.forceopen) {
+            display: none;
+            width: 0px;
+
+            // .closeSidebar {
+            //     display: none;
+            // }
+        }
+    }
+
+    @media screen and (max-width: 500px) {
+        min-width: calc(100vw - 40px);
     }
 
     .tabContainer {
@@ -602,7 +670,7 @@ https://loading.io/css/
             margin-top: 25px;
             height: 50px;
             background-color: var(--secondary-color);
-            border-radius: 5px;
+            border-radius: var(--border-radius);
 
             &.selected {
                 background-color: var(--primary-color-light);
@@ -634,7 +702,7 @@ https://loading.io/css/
     @media screen and (max-width: 1025px) {
         justify-content: center;
         width: 100%;
-        padding-bottom: 5px;
+        padding-bottom: 10px;
     }
 
     .tafelDivInner {
@@ -647,7 +715,7 @@ https://loading.io/css/
         height: 50px;
         background-color: var(--secondary-color);
         color: var(--dark-text);
-        border-radius: 5px;
+        border-radius: var(--border-radius);
 
         @media screen and (max-width: 1025px) {
             width: 50%;
@@ -662,7 +730,7 @@ https://loading.io/css/
     height: 100%;
     display: flex;
     flex-direction: column;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
 
     &.picture {
         border: none;
@@ -671,7 +739,7 @@ https://loading.io/css/
     @media screen and (max-width: 1025px) {
         overflow: auto;
         // margin: 10px;
-        width: calc(100vw - 40px);
+        max-width: calc(100vw - 40px);
     }
 
     .row {
@@ -681,21 +749,45 @@ https://loading.io/css/
 
         &:first-child {
             :first-child {
-                border-top-left-radius: 5px;
+                &.column {
+                    border-top-left-radius: var(--border-radius);
+
+                    .seat {
+                        border-top-left-radius: var(--border-radius);
+                    }
+                }
             }
 
             :last-child {
-                border-top-right-radius: 5px;
+                &.column {
+                    border-top-right-radius: var(--border-radius);
+
+                    .seat {
+                        border-top-right-radius: var(--border-radius);
+                    }
+                }
             }
         }
 
         &:last-child {
             :first-child {
-                border-bottom-left-radius: 5px;
+                &.column {
+                    border-bottom-left-radius: var(--border-radius);
+
+                    .seat {
+                        border-bottom-left-radius: var(--border-radius);
+                    }
+                }
             }
 
             :last-child {
-                border-bottom-right-radius: 5px;
+                &.column {
+                    border-bottom-right-radius: var(--border-radius);
+
+                    .seat {
+                        border-bottom-right-radius: var(--border-radius);
+                    }
+                }
             }
         }
 
@@ -707,8 +799,8 @@ https://loading.io/css/
             display: flex;
 
             @media screen and (max-width: 1025px) {
-                min-width: 100px;
-                min-height: 100px;
+                min-width: 90px;
+                min-height: 90px;
             }
 
             @media screen and (max-width: 800px) {
@@ -729,12 +821,7 @@ https://loading.io/css/
                 border: 1px solid black;
             }
 
-            .lock {
-                position: absolute;
-                font-size: small;
-                transition: 0.3s;
-                padding: 3px;
-            }
+
 
             .seat {
                 width: 100%;
@@ -742,10 +829,13 @@ https://loading.io/css/
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                position: relative;
+
+                overflow: clip;
 
                 @media screen and (max-width: 1025px) {
-                    min-width: 100px;
-                    min-height: 100px;
+                    min-width: 90px;
+                    min-height: 90px;
                 }
 
                 @media screen and (max-width: 800px) {
@@ -758,6 +848,15 @@ https://loading.io/css/
                     min-height: 50px;
                 }
 
+                .lock {
+                    position: absolute;
+                    top: 0px;
+                    left: 0px;
+                    font-size: small;
+                    transition: 0.3s;
+                    padding: 3px;
+                }
+
                 p {
                     padding: 5px;
                     margin: 0px;
@@ -766,6 +865,7 @@ https://loading.io/css/
                     display: -webkit-inline-box;
                     -webkit-line-clamp: 4;
                     -webkit-box-orient: vertical;
+                    position: absolute;
 
                     &.small {
                         font-size: small;
@@ -804,6 +904,10 @@ https://loading.io/css/
     padding-bottom: 0px;
     width: 100%;
 
+    @media screen and (max-width: 1025px) {
+        padding-top: 10px;
+    }
+
     .sitzplanWrapper {
         display: flex;
         flex-direction: column;
@@ -820,6 +924,10 @@ https://loading.io/css/
             flex-direction: column;
 
             @media screen and (max-width: 1025px) and (min-height: 400px) {
+                max-height: calc(100% - 90px);
+            }
+
+            @media screen and (max-width: 600px) and (min-height: 400px) {
                 max-height: calc(100% - 220px);
             }
 
@@ -845,7 +953,7 @@ https://loading.io/css/
                 flex-direction: row-reverse;
                 justify-content: space-between;
 
-                @media screen and (max-width: 1025px) {
+                @media screen and (max-width: 600px) {
                     width: 100%;
                     flex-direction: column;
                     align-items: center;
@@ -853,6 +961,14 @@ https://loading.io/css/
 
                 .openClose {
                     transition: .3s;
+
+                    @media screen and (max-width: 700px) {
+                        width: 200px;
+
+                        .text {
+                            font-size: medium;
+                        }
+                    }
 
                     &:hover {
                         filter: brightness(.9);
@@ -863,7 +979,7 @@ https://loading.io/css/
                             bottom: 241px;
                         }
 
-                        @media screen and (max-width: 1025px) and (max-height: 400px) {
+                        @media screen and (max-width: 600px) and (max-height: 400px) {
                             bottom: 141px;
                         }
 
@@ -877,7 +993,7 @@ https://loading.io/css/
                     height: 70px;
                     width: 250px;
                     background-color: var(--secondary-color);
-                    border-radius: 10px 10px 0px 0px;
+                    border-radius: var(--border-radius) var(--border-radius) 0px 0px;
                     position: relative;
                     left: 0px;
                     user-select: none;
@@ -900,7 +1016,7 @@ https://loading.io/css/
                     justify-content: flex-end;
                     margin-bottom: 20px;
 
-                    @media screen and (max-width: 1025px) {
+                    @media screen and (max-width: 600px) {
                         flex-direction: column;
                         width: 100%;
                         margin-bottom: 0px;
@@ -913,7 +1029,7 @@ https://loading.io/css/
                         position: relative;
                         height: 50px;
                         width: 250px;
-                        background-color: var(--primary-color);
+                        background-color: var(--primary-color-light);
                         position: relative;
                         left: 0px;
                         user-select: none;
@@ -923,12 +1039,21 @@ https://loading.io/css/
                         align-items: center;
                         justify-content: center;
                         transition: 0.3s;
+                        border-radius: var(--border-radius);
 
                         @media screen and (max-width: 1200px) {
                             width: 175px;
                         }
 
-                        @media screen and (max-width: 1025px) {
+                        @media screen and (max-width: 700px) {
+                            width: 160px;
+
+                            .text {
+                                font-size: medium;
+                            }
+                        }
+
+                        @media screen and (max-width: 600px) {
                             margin-bottom: 15px;
                             width: 100%;
                             margin-left: 0px;
@@ -938,13 +1063,12 @@ https://loading.io/css/
                             background-color: var(--primary-color-light);
 
                             .text {
-                                color: var(--dark-text);
+                                color: var(--darker-text);
                             }
                         }
 
                         .text {
-                            color: var(--light-text);
-                            margin-left: 10px;
+                            color: var(--dark-text);
                         }
                     }
                 }
@@ -958,7 +1082,7 @@ https://loading.io/css/
                 display: flex;
 
                 @media screen and (min-width: 1026px) {
-                    border-top-right-radius: 5px;
+                    border-top-right-radius: var(--border-radius);
                 }
 
                 background-color: var(--bg-color);
@@ -976,11 +1100,11 @@ https://loading.io/css/
                     padding: 10px;
                     padding-left: 0px;
 
-                    @media screen and (max-width: 1025px) and (min-height: 400px) {
+                    @media screen and (max-width: 800px) and (min-height: 400px) {
                         height: 220px;
                     }
 
-                    @media screen and (max-width: 1025px) and (max-height: 400px) {
+                    @media screen and (max-width: 600px) and (max-height: 400px) {
                         height: 120px;
                     }
 
@@ -1014,7 +1138,7 @@ https://loading.io/css/
                         margin: 10px;
                         padding-top: 5px;
                         background-color: white;
-                        border-radius: 5px;
+                        border-radius: var(--border-radius);
                         border: none;
                         transition: .3s;
 
@@ -1088,148 +1212,152 @@ https://loading.io/css/
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            margin-top: 15px;
+            align-items: center;
 
-            .className {
-                margin-bottom: 10px;
-                margin-left: 10px;
-                height: 30px;
-                color: var(--primary-color);
-            }
+            .namesInnerWrapper {
 
-            .studentList {
-                padding-top: 5px;
-                padding-bottom: 15px;
-                border: 1px solid var(--primary-color);
-                margin-bottom: 20px;
-
-                .list {
-                    padding-left: 10px;
-                    padding-right: 10px;
-                    padding-bottom: 5px;
-                    margin-bottom: 10px;
-                    overflow-y: auto;
-                    overflow-x: hidden;
-                    scrollbar-width: thin;
-                    max-height: calc(100vh - 250px);
-
-                    @media screen and (max-height: 400px) {
-                        max-height: 100vh;
-                    }
-
-                    display: flex;
-                    flex-direction: column;
-
-                    .student {
-                        display: flex;
-                        flex-direction: row;
-                        margin-top: 5px;
-                        height: 30px;
-
-                        input {
-                            cursor: move;
-                        }
-
-                        // .removeStudent {
-                        //     user-select: none;
-                        //     margin-left: 5px;
-                        //     line-height: 30px;
-                        //     font-size: 22px;
-                        //     color: white;
-                        //     background-color: darkred;
-                        //     width: 30px;
-                        //     height: 30px;
-                        //     transition: 0.3s;
-                        //     cursor: pointer;
-
-                        //     &:hover {
-                        //         background-color: red;
-                        //     }
-                        // }
-
-                        .dragStudent {
-                            cursor: move;
-                            margin-left: 5px;
-                            color: white;
-                            background-color: green;
-                            width: 30px;
-                            height: 30px;
-                        }
-                    }
-                }
-
-            }
-
-            .newStudentContainer {
+                flex: 1;
                 display: flex;
-                flex-direction: row;
-                margin-top: 5px;
-                margin: 10px;
-                height: 30px;
-
-                .newStudent {
-                    margin-right: 10px;
+                flex-direction: column;
+                align-items: flex-start;
+                align-items: center;
+                .className {
+                    margin-bottom: 10px;
+                    margin-left: 10px;
+                    height: 30px;
+                    color: var(--primary-color);
                 }
 
-                i {
-                    user-select: none;
-                    line-height: 30px;
-                    font-size: 16px;
-                    color: white;
-                    background-color: darkred;
-                    width: 30px;
+                .studentList {
+                    padding-top: 5px;
+                    padding-bottom: 15px;
+                    border: 1px solid #000;
+                    margin-bottom: 10px;
+                    border-radius: var(--border-radius);
+                    .list {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                        padding-bottom: 5px;
+                        margin-bottom: 10px;
+                        overflow-y: auto;
+                        overflow-x: hidden;
+                        scrollbar-width: thin;
+                        max-height: calc(100vh - 250px);
+
+                        @media screen and (max-height: 400px) {
+                            max-height: 100vh;
+                        }
+
+                        display: flex;
+                        flex-direction: column;
+
+                        .number {
+                            border-radius: var(--border-radius);
+                            background-color: var(--secondary-color);
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            width: 30px;
+                            margin-right: 10px;
+                        }
+
+                        .student {
+                            display: flex;
+                            flex-direction: row;
+                            margin-top: 5px;
+                            height: 30px;
+
+                            input {
+                                cursor: move;
+                            }
+
+                            .dragStudent {
+                                cursor: move;
+                                margin-left: 5px;
+                                color: white;
+                                background-color: green;
+                                width: 30px;
+                                height: 30px;
+                            }
+                        }
+                    }
+
+                }
+
+                .newStudentContainer {
+                    display: flex;
+                    flex-direction: row;
+                    margin-top: 5px;
+                    margin: 10px;
                     height: 30px;
-                    transition: 0.3s;
-                    cursor: pointer;
+
+                    .newStudent {
+                        margin-left: 10px;
+                    }
 
                     i {
-                        color: var(--light-text);
+                        user-select: none;
+                        line-height: 30px;
+                        font-size: 16px;
+                        color: white;
+                        border-radius: var(--border-radius);
+                        background-color: darkred;
+                        width: 30px;
+                        height: 30px;
+                        transition: 0.3s;
+                        cursor: pointer;
+
+                        i {
+                            color: var(--light-text);
+                        }
                     }
                 }
-            }
 
-            #appendBox {
-                margin-top: 10px;
-                width: 16px;
-                height: 16px;
-            }
-
-            .fileInputThingy {
-                border: 1px var(--primary-color) solid;
-                transition: 0.3s;
-                overflow: auto;
-                margin: 1%;
-                background-color: var(--bg-color);
-                color: black;
-                padding: 0;
-
-                span {
-                    padding: 10px;
+                #appendBox {
+                    margin-top: 10px;
+                    width: 16px;
+                    height: 16px;
                 }
-            }
 
-            #fileInputThingy {
-                width: 0.1px;
-                height: 0.1px;
-                opacity: 0;
-                overflow: hidden;
-                position: absolute;
-                z-index: -1;
-            }
+                .fileInputThingy {
+                    border: 1px var(--primary-color) solid;
+                    transition: 0.3s;
+                    overflow: auto;
+                    margin: 1%;
+                    background-color: var(--bg-color);
+                    color: black;
+                    padding: 0;
 
-            input[type="file"]::file-selector-button {
-                width: 50%;
-                height: 33px;
-                border-radius: 0;
-                border: 1px var(--primary-color) solid;
-                transition: 0.3s;
-                overflow: auto;
-                background-color: var(--primary-color);
-                margin: 1%;
-                color: white;
-            }
+                    span {
+                        padding: 10px;
+                    }
+                }
 
-            input[type="file"]::file-selector-button:hover {
-                background-color: var(--primary-color);
+                #fileInputThingy {
+                    width: 0.1px;
+                    height: 0.1px;
+                    opacity: 0;
+                    overflow: hidden;
+                    position: absolute;
+                    z-index: -1;
+                }
+
+                input[type="file"]::file-selector-button {
+                    width: 50%;
+                    height: 33px;
+                    border-radius: 0;
+                    border: 1px var(--primary-color) solid;
+                    transition: 0.3s;
+                    overflow: auto;
+                    background-color: var(--primary-color);
+                    margin: 1%;
+                    color: white;
+                }
+
+                input[type="file"]::file-selector-button:hover {
+                    background-color: var(--primary-color);
+                }
             }
         }
 
@@ -1253,10 +1381,51 @@ https://loading.io/css/
 
 
         .smallroom {
+            margin-left: 25px;
             margin-right: 25px;
             flex: 2;
             max-height: calc(100vh - 250px);
+            @media screen and (max-width: 550px) {
+                display: none;
+            }
 
+            .tafelDivOuter {
+                @media screen and (max-width: 1025px) {
+                    justify-content: space-between;
+                }
+
+                .tafelDivInner {
+                    width: 50%;
+                }
+            }
+
+            .room {
+                height: auto;
+                min-height: 60vh;
+
+                @media screen and (max-width: 1025px) {
+                    overflow: auto;
+                    width: 100%;
+                    // margin: 10px;
+                }
+
+                .row {
+                    max-height: 10%;
+                    .column {
+                        min-width: auto;
+                        min-height: auto;
+
+                        .seat {
+                            min-width: auto;
+                            min-height: auto;
+
+                            p {
+                                max-height: 50px;
+                            }
+                        }
+                    }
+                }
+            }
 
             .removeStudent {
                 position: relative;
@@ -1268,9 +1437,11 @@ https://loading.io/css/
                 color: white;
                 background-color: darkred;
                 width: 30px;
+                border-radius: var(--border-radius);
                 height: 30px;
                 transition: 0.3s;
                 cursor: pointer;
+                border-radius: var(--border-radius);
 
                 i {
                     color: var(--light-text);
@@ -1285,10 +1456,9 @@ https://loading.io/css/
             }
 
             .questionMark {
+                border-radius: var(--border-radius);
                 position: relative;
-                left: -5px;
                 user-select: none;
-                margin-left: 5px;
                 line-height: 30px;
                 font-size: 22px;
                 color: var(--dark-text);

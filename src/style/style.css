@@ -151,21 +151,84 @@ https://loading.io/css/
     transform: scale(1.5);
   }
 }
+.openSidebar {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 10px;
+  background-color: var(--secondary-color);
+  border-bottom-right-radius: var(--border-radius);
+  transition: 0.3s;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  width: 20px;
+  cursor: pointer;
+}
+.openSidebar:hover {
+  filter: brightness(0.9);
+}
+.openSidebar.open {
+  display: none;
+}
+@media screen and (min-width: 1026px) {
+  .openSidebar {
+    display: none;
+  }
+}
+
 .sideBar {
-  width: 250px;
+  transition: 0.3s;
+  min-width: 250px;
   background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
   padding: 20px;
+  position: relative;
 }
-.sideBar .logo {
-  padding: 50px;
-  padding-top: 10px;
-  padding-bottom: 20px;
+.sideBar .logoContainer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+.sideBar .logoContainer .logo {
+  display: block;
+  max-width: 111px;
+  max-height: 86.5px;
+  width: auto;
+  height: auto;
+}
+.sideBar .closeSidebar {
+  padding: 10px;
+  background-color: var(--secondary-color);
+  border-bottom-left-radius: var(--border-radius);
+  transition: 0.3s;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  cursor: pointer;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 20px;
+}
+.sideBar .closeSidebar:hover {
+  filter: brightness(0.9);
+}
+@media screen and (min-width: 1026px) {
+  .sideBar .closeSidebar {
+    display: none;
+  }
 }
 @media screen and (max-width: 1025px) {
-  .sideBar {
+  .sideBar:not(.forceopen) {
     display: none;
+    width: 0px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .sideBar {
+    min-width: calc(100vw - 40px);
   }
 }
 .sideBar .tabContainer {
@@ -185,7 +248,7 @@ https://loading.io/css/
   margin-top: 25px;
   height: 50px;
   background-color: var(--secondary-color);
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   transition: 0.3s;
 }
 .sideBar .tabContainer .tab.selected {
@@ -210,7 +273,7 @@ https://loading.io/css/
   .tafelDivOuter {
     justify-content: center;
     width: 100%;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
   }
 }
 .tafelDivOuter .tafelDivInner {
@@ -224,7 +287,7 @@ https://loading.io/css/
   height: 50px;
   background-color: var(--secondary-color);
   color: var(--dark-text);
-  border-radius: 5px;
+  border-radius: var(--border-radius);
 }
 @media screen and (max-width: 1025px) {
   .tafelDivOuter .tafelDivInner {
@@ -239,7 +302,7 @@ https://loading.io/css/
   height: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
 }
 .room.picture {
   border: none;
@@ -247,7 +310,7 @@ https://loading.io/css/
 @media screen and (max-width: 1025px) {
   .room {
     overflow: auto;
-    width: calc(100vw - 40px);
+    max-width: calc(100vw - 40px);
   }
 }
 .room .row {
@@ -255,17 +318,29 @@ https://loading.io/css/
   display: flex;
   flex-direction: row;
 }
-.room .row:first-child :first-child {
-  border-top-left-radius: 5px;
+.room .row:first-child :first-child.column {
+  border-top-left-radius: var(--border-radius);
 }
-.room .row:first-child :last-child {
-  border-top-right-radius: 5px;
+.room .row:first-child :first-child.column .seat {
+  border-top-left-radius: var(--border-radius);
 }
-.room .row:last-child :first-child {
-  border-bottom-left-radius: 5px;
+.room .row:first-child :last-child.column {
+  border-top-right-radius: var(--border-radius);
 }
-.room .row:last-child :last-child {
-  border-bottom-right-radius: 5px;
+.room .row:first-child :last-child.column .seat {
+  border-top-right-radius: var(--border-radius);
+}
+.room .row:last-child :first-child.column {
+  border-bottom-left-radius: var(--border-radius);
+}
+.room .row:last-child :first-child.column .seat {
+  border-bottom-left-radius: var(--border-radius);
+}
+.room .row:last-child :last-child.column {
+  border-bottom-right-radius: var(--border-radius);
+}
+.room .row:last-child :last-child.column .seat {
+  border-bottom-right-radius: var(--border-radius);
 }
 .room .row .column {
   width: 0px;
@@ -276,8 +351,8 @@ https://loading.io/css/
 }
 @media screen and (max-width: 1025px) {
   .room .row .column {
-    min-width: 100px;
-    min-height: 100px;
+    min-width: 90px;
+    min-height: 90px;
   }
 }
 @media screen and (max-width: 800px) {
@@ -298,23 +373,19 @@ https://loading.io/css/
 .room .row .column.marked {
   border: 1px solid black;
 }
-.room .row .column .lock {
-  position: absolute;
-  font-size: small;
-  transition: 0.3s;
-  padding: 3px;
-}
 .room .row .column .seat {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  overflow: clip;
 }
 @media screen and (max-width: 1025px) {
   .room .row .column .seat {
-    min-width: 100px;
-    min-height: 100px;
+    min-width: 90px;
+    min-height: 90px;
   }
 }
 @media screen and (max-width: 800px) {
@@ -329,6 +400,14 @@ https://loading.io/css/
     min-height: 50px;
   }
 }
+.room .row .column .seat .lock {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  font-size: small;
+  transition: 0.3s;
+  padding: 3px;
+}
 .room .row .column .seat p {
   padding: 5px;
   margin: 0px;
@@ -337,6 +416,7 @@ https://loading.io/css/
   display: -webkit-inline-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
+  position: absolute;
 }
 .room .row .column .seat p.small {
   font-size: small;
@@ -364,6 +444,11 @@ https://loading.io/css/
   padding-bottom: 0px;
   width: 100%;
 }
+@media screen and (max-width: 1025px) {
+  .rightSide {
+    padding-top: 10px;
+  }
+}
 .rightSide .sitzplanWrapper {
   display: flex;
   flex-direction: column;
@@ -381,6 +466,11 @@ https://loading.io/css/
   flex-direction: column;
 }
 @media screen and (max-width: 1025px) and (min-height: 400px) {
+  .rightSide .sitzplanWrapper #sitzplan {
+    max-height: calc(100% - 90px);
+  }
+}
+@media screen and (max-width: 600px) and (min-height: 400px) {
   .rightSide .sitzplanWrapper #sitzplan {
     max-height: calc(100% - 220px);
   }
@@ -401,7 +491,7 @@ https://loading.io/css/
   flex-direction: row-reverse;
   justify-content: space-between;
 }
-@media screen and (max-width: 1025px) {
+@media screen and (max-width: 600px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer {
     width: 100%;
     flex-direction: column;
@@ -415,7 +505,7 @@ https://loading.io/css/
   height: 70px;
   width: 250px;
   background-color: var(--secondary-color);
-  border-radius: 10px 10px 0px 0px;
+  border-radius: var(--border-radius) var(--border-radius) 0px 0px;
   position: relative;
   left: 0px;
   -webkit-user-select: none;
@@ -426,6 +516,14 @@ https://loading.io/css/
   justify-content: center;
   bottom: 0px;
 }
+@media screen and (max-width: 700px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose {
+    width: 200px;
+  }
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose .text {
+    font-size: medium;
+  }
+}
 .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose:hover {
   filter: brightness(0.9);
 }
@@ -434,7 +532,7 @@ https://loading.io/css/
     bottom: 241px;
   }
 }
-@media screen and (max-width: 1025px) and (max-height: 400px) {
+@media screen and (max-width: 600px) and (max-height: 400px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .openClose.open {
     bottom: 141px;
   }
@@ -455,7 +553,7 @@ https://loading.io/css/
   justify-content: flex-end;
   margin-bottom: 20px;
 }
-@media screen and (max-width: 1025px) {
+@media screen and (max-width: 600px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons {
     flex-direction: column;
     width: 100%;
@@ -468,7 +566,7 @@ https://loading.io/css/
   position: relative;
   height: 50px;
   width: 250px;
-  background-color: var(--primary-color);
+  background-color: var(--primary-color-light);
   position: relative;
   left: 0px;
   -webkit-user-select: none;
@@ -480,13 +578,22 @@ https://loading.io/css/
   align-items: center;
   justify-content: center;
   transition: 0.3s;
+  border-radius: var(--border-radius);
 }
 @media screen and (max-width: 1200px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button {
     width: 175px;
   }
 }
-@media screen and (max-width: 1025px) {
+@media screen and (max-width: 700px) {
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button {
+    width: 160px;
+  }
+  .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button .text {
+    font-size: medium;
+  }
+}
+@media screen and (max-width: 600px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button {
     margin-bottom: 15px;
     width: 100%;
@@ -497,11 +604,10 @@ https://loading.io/css/
   background-color: var(--primary-color-light);
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button:hover .text {
-  color: var(--dark-text);
+  color: var(--darker-text);
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .buttonsContainer .buttons .button .text {
-  color: var(--light-text);
-  margin-left: 10px;
+  color: var(--dark-text);
 }
 .rightSide .sitzplanWrapper .planSettingsContainer .planSettings {
   transition: 0.3s;
@@ -513,7 +619,7 @@ https://loading.io/css/
 }
 @media screen and (min-width: 1026px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .planSettings {
-    border-top-right-radius: 5px;
+    border-top-right-radius: var(--border-radius);
   }
 }
 @media screen and (max-width: 1025px) {
@@ -530,12 +636,12 @@ https://loading.io/css/
   padding: 10px;
   padding-left: 0px;
 }
-@media screen and (max-width: 1025px) and (min-height: 400px) {
+@media screen and (max-width: 800px) and (min-height: 400px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .planSettings.open {
     height: 220px;
   }
 }
-@media screen and (max-width: 1025px) and (max-height: 400px) {
+@media screen and (max-width: 600px) and (max-height: 400px) {
   .rightSide .sitzplanWrapper .planSettingsContainer .planSettings.open {
     height: 120px;
   }
@@ -565,7 +671,7 @@ https://loading.io/css/
   margin: 10px;
   padding-top: 5px;
   background-color: white;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   border: none;
   transition: 0.3s;
 }
@@ -620,20 +726,30 @@ https://loading.io/css/
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-top: 15px;
+  align-items: center;
 }
-.rightSide .studentListWrapper .names .className {
+.rightSide .studentListWrapper .names .namesInnerWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-items: center;
+}
+.rightSide .studentListWrapper .names .namesInnerWrapper .className {
   margin-bottom: 10px;
   margin-left: 10px;
   height: 30px;
   color: var(--primary-color);
 }
-.rightSide .studentListWrapper .names .studentList {
+.rightSide .studentListWrapper .names .namesInnerWrapper .studentList {
   padding-top: 5px;
   padding-bottom: 15px;
-  border: 1px solid var(--primary-color);
-  margin-bottom: 20px;
+  border: 1px solid #000;
+  margin-bottom: 10px;
+  border-radius: var(--border-radius);
 }
-.rightSide .studentListWrapper .names .studentList .list {
+.rightSide .studentListWrapper .names .namesInnerWrapper .studentList .list {
   padding-left: 10px;
   padding-right: 10px;
   padding-bottom: 5px;
@@ -646,20 +762,29 @@ https://loading.io/css/
   flex-direction: column;
 }
 @media screen and (max-height: 400px) {
-  .rightSide .studentListWrapper .names .studentList .list {
+  .rightSide .studentListWrapper .names .namesInnerWrapper .studentList .list {
     max-height: 100vh;
   }
 }
-.rightSide .studentListWrapper .names .studentList .list .student {
+.rightSide .studentListWrapper .names .namesInnerWrapper .studentList .list .number {
+  border-radius: var(--border-radius);
+  background-color: var(--secondary-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  margin-right: 10px;
+}
+.rightSide .studentListWrapper .names .namesInnerWrapper .studentList .list .student {
   display: flex;
   flex-direction: row;
   margin-top: 5px;
   height: 30px;
 }
-.rightSide .studentListWrapper .names .studentList .list .student input {
+.rightSide .studentListWrapper .names .namesInnerWrapper .studentList .list .student input {
   cursor: move;
 }
-.rightSide .studentListWrapper .names .studentList .list .student .dragStudent {
+.rightSide .studentListWrapper .names .namesInnerWrapper .studentList .list .student .dragStudent {
   cursor: move;
   margin-left: 5px;
   color: white;
@@ -667,38 +792,39 @@ https://loading.io/css/
   width: 30px;
   height: 30px;
 }
-.rightSide .studentListWrapper .names .newStudentContainer {
+.rightSide .studentListWrapper .names .namesInnerWrapper .newStudentContainer {
   display: flex;
   flex-direction: row;
   margin-top: 5px;
   margin: 10px;
   height: 30px;
 }
-.rightSide .studentListWrapper .names .newStudentContainer .newStudent {
-  margin-right: 10px;
+.rightSide .studentListWrapper .names .namesInnerWrapper .newStudentContainer .newStudent {
+  margin-left: 10px;
 }
-.rightSide .studentListWrapper .names .newStudentContainer i {
+.rightSide .studentListWrapper .names .namesInnerWrapper .newStudentContainer i {
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
   line-height: 30px;
   font-size: 16px;
   color: white;
+  border-radius: var(--border-radius);
   background-color: darkred;
   width: 30px;
   height: 30px;
   transition: 0.3s;
   cursor: pointer;
 }
-.rightSide .studentListWrapper .names .newStudentContainer i i {
+.rightSide .studentListWrapper .names .namesInnerWrapper .newStudentContainer i i {
   color: var(--light-text);
 }
-.rightSide .studentListWrapper .names #appendBox {
+.rightSide .studentListWrapper .names .namesInnerWrapper #appendBox {
   margin-top: 10px;
   width: 16px;
   height: 16px;
 }
-.rightSide .studentListWrapper .names .fileInputThingy {
+.rightSide .studentListWrapper .names .namesInnerWrapper .fileInputThingy {
   border: 1px var(--primary-color) solid;
   transition: 0.3s;
   overflow: auto;
@@ -707,10 +833,10 @@ https://loading.io/css/
   color: black;
   padding: 0;
 }
-.rightSide .studentListWrapper .names .fileInputThingy span {
+.rightSide .studentListWrapper .names .namesInnerWrapper .fileInputThingy span {
   padding: 10px;
 }
-.rightSide .studentListWrapper .names #fileInputThingy {
+.rightSide .studentListWrapper .names .namesInnerWrapper #fileInputThingy {
   width: 0.1px;
   height: 0.1px;
   opacity: 0;
@@ -718,7 +844,7 @@ https://loading.io/css/
   position: absolute;
   z-index: -1;
 }
-.rightSide .studentListWrapper .names input[type=file]::file-selector-button {
+.rightSide .studentListWrapper .names .namesInnerWrapper input[type=file]::file-selector-button {
   width: 50%;
   height: 33px;
   border-radius: 0;
@@ -729,7 +855,7 @@ https://loading.io/css/
   margin: 1%;
   color: white;
 }
-.rightSide .studentListWrapper .names input[type=file]::file-selector-button:hover {
+.rightSide .studentListWrapper .names .namesInnerWrapper input[type=file]::file-selector-button:hover {
   background-color: var(--primary-color);
 }
 .rightSide .studentListWrapper .ruleDiv {
@@ -748,9 +874,47 @@ https://loading.io/css/
   width: 100%;
 }
 .rightSide .studentListWrapper .smallroom {
+  margin-left: 25px;
   margin-right: 25px;
   flex: 2;
   max-height: calc(100vh - 250px);
+}
+@media screen and (max-width: 550px) {
+  .rightSide .studentListWrapper .smallroom {
+    display: none;
+  }
+}
+@media screen and (max-width: 1025px) {
+  .rightSide .studentListWrapper .smallroom .tafelDivOuter {
+    justify-content: space-between;
+  }
+}
+.rightSide .studentListWrapper .smallroom .tafelDivOuter .tafelDivInner {
+  width: 50%;
+}
+.rightSide .studentListWrapper .smallroom .room {
+  height: auto;
+  min-height: 60vh;
+}
+@media screen and (max-width: 1025px) {
+  .rightSide .studentListWrapper .smallroom .room {
+    overflow: auto;
+    width: 100%;
+  }
+}
+.rightSide .studentListWrapper .smallroom .room .row {
+  max-height: 10%;
+}
+.rightSide .studentListWrapper .smallroom .room .row .column {
+  min-width: auto;
+  min-height: auto;
+}
+.rightSide .studentListWrapper .smallroom .room .row .column .seat {
+  min-width: auto;
+  min-height: auto;
+}
+.rightSide .studentListWrapper .smallroom .room .row .column .seat p {
+  max-height: 50px;
 }
 .rightSide .studentListWrapper .smallroom .removeStudent {
   position: relative;
@@ -764,9 +928,11 @@ https://loading.io/css/
   color: white;
   background-color: darkred;
   width: 30px;
+  border-radius: var(--border-radius);
   height: 30px;
   transition: 0.3s;
   cursor: pointer;
+  border-radius: var(--border-radius);
 }
 .rightSide .studentListWrapper .smallroom .removeStudent i {
   color: var(--light-text);
@@ -778,12 +944,11 @@ https://loading.io/css/
   left: 0px;
 }
 .rightSide .studentListWrapper .smallroom .questionMark {
+  border-radius: var(--border-radius);
   position: relative;
-  left: -5px;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
-  margin-left: 5px;
   line-height: 30px;
   font-size: 22px;
   color: var(--dark-text);
